@@ -29,3 +29,7 @@
 (defun hukusu()
   (values 3 7))
 
+;; 自前のcondition型の設定
+(define-condition foo () ()
+  (:report (lambda (condition stream)
+             (princ "stop FOOing" stream))))
