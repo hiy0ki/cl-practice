@@ -33,3 +33,19 @@
 (define-condition foo () ()
   (:report (lambda (condition stream)
              (princ "stop FOOing" stream))))
+
+;; 末尾呼び出し最適化
+;; before
+(defun my-length (lst)
+  (if lst
+      (1+ (my-length (cdr lst)))
+      0))
+
+;; after
+(defun my-length-2 (lst)
+  (labels ((f (lst acc)
+             (if lst
+                 (f (cdr lst) (1+ acc))
+                 acc)))
+    (f lst 0)))
+
