@@ -34,6 +34,12 @@
                           first-move
                           (attacking-moves board player spare-dice))))
 
+;; game-treeのmemo化
+(let ((old-game-tree (symbol-function 'game-tree))
+      (previous (make-hash-table :test #'equalp)))
+  (defun game-tree (&rest rest)
+    (or (gethash rest previous)
+        (setf (gethash rest previous) (apply old-game-tree rest)))))
 
 (defun add-passing-move (board player spare-dice first-move moves)
   (if first-move
@@ -68,15 +74,22 @@
 
 
 (defun neighbors (pos)
-  (let ((up (- pos *board-size*))
-        (down (+ pos *board-size*)))
-    (loop for p in (append (list up down)
-                           (unless (zerop (mod pos *board-size*))
-                             (list (1- up) (1- pos)))
-                           (unless (zerop (mod (1+ pos) *board-size*))
-                             (list (1+ pos) (1+ down))))
-       when (and (>= p 0) (< p *board-hexnum*))
-       collect p)))
+ (let ((up (- pos *board-size*))
+       (down (+ pos *board-size*)))
+   (loop for p in (append (list up down)
+                          (unless (zerop (mod pos *board-size*))
+                            (list (1- up) (1- pos)))
+                          (unless (zerop (mod (1+ pos) *board-size*))
+                            (list (1+ pos) (1+ down))))
+      when (and (>= p 0) (< p *board-hexnum*))
+     collect p)))
+
+;; neighborsのmemo化
+(let ((old-neighbors (symbol-function 'neighbors))
+      (previous (make-hash-table)))
+  (defun neighbors (pos)
+    (or (gethash pos previous)
+        (setf (gethash pos previous) (funcall old-neighbors pos)))))
 
 (defun board-attack (board player src dst dice)
   (board-array (loop for pos from 0
@@ -153,6 +166,17 @@
           (if (member player w)
               (/ 1 (length w))
               0)))))
+
+;; rate-positionのmemo化
+(let ((old-rate-position (symbol-function 'rate-position))
+      (previous (make-hash-table)))
+  (defun rate-position (tree player)
+    (let ((tab (gethash player previous)))
+      (unless tab
+        (setf tab (setf (gethash player previous) (make-hash-table))))
+      (or (gethash tree tab)
+          (setf (gethash tree tab)
+          (funcall old-rate-position tree player))))))
 
 (defun get-ratings (tree player)
   (mapcar (lambda (move)
