@@ -22,3 +22,12 @@
   (loop for n from number when (primep n) return n))
 
 
+;; numbers
+(/= 1 2) ; t
+(/= 1 1) ; nil
+
+(max 3 5) ; 5
+(min 3 5) ; 3
+(min (3) 5) ; error
+(min 3 t) ; error
+
