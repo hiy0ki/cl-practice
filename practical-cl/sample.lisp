@@ -57,3 +57,23 @@
 ;; list
 (append '(1 2 3) '(4 5 6))
 
+
+;; sort
+;; 破壊的 / この本の中で破壊的操作をリサイクルな操作とも呼んでいる
+(defparameter *lst* (list 4 3 2 1))
+
+(sort *lst* #'<) ; (1 2 3 4)
+
+*lst* ; (3 4) みたいにもとのlistは壊れる
+
+;; file open and read
+;; read はlispのコードとして読み込む
+(defparameter *s* (open "./test.txt"))
+
+(read *s*) ; (1 2 3)
+(read *s*) ; 456
+(read *s*) ; ((A B) (C D))
+(read *s*) ; error なにもないため
+(close *s*) ; T
+
+
