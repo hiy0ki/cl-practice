@@ -76,4 +76,20 @@
 (read *s*) ; error なにもないため
 (close *s*) ; T
 
+;; file I/O
+(defparameter *s* (open "./test.txt"))
+(read *s*)
+(close *s*)
+
+;; 明示的に閉じなくても良いマクロ
+;; file I/Oはこっちを使うのが基本
+(with-open-file (stream "./test.txt")
+  (read stream))
+
+;; pathname
+(defparameter *p* (pathname "/hog/uf/ss/ff.txt"))
+
+(pathname-directory *p*) ; (:ABSOLUTE "hog" "uf" "ss")
+(pathname-name *p*) ; "ff"
+(pathname-type *p*) ; "txt"
 
