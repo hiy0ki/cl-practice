@@ -21,8 +21,11 @@
 ;; slotとはfieldのこと
 ;; 多重継承は可
 (defclass bank-account ()
-  (customer-name
-  balance))
+  ((customer-name
+    :initarg :customer-name)
+   (balance
+    :initarg :balance
+    :initform 0)))
 
 (defclass checking-account (bank-account)
   )
@@ -43,5 +46,9 @@
 ;; get
 (slot-value *account* 'customer-name) ; John Doe
 (slot-value *account* 'balance) ; 1000
+
+;; objectの初期化を使用
+(defparameter *acount2*
+  (make-instance 'bank-account :customer-name "Hoge" :balance 10000))
 
 
